@@ -49,6 +49,12 @@ struct gserial_device;
 struct gserial_device * gserial_open(const char * portname, unsigned int baudrate);
 
 /*
+ * Open a serial device silently.
+ * Used when probing ports during device enumeration.
+ */
+struct gserial_device * gserial_open_silent(const char * portname, unsigned int baudrate);
+
+/*
  * \brief This function closes a serial device.
  *
  * \param device  the serial device

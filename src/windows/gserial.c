@@ -71,12 +71,13 @@ static int set_serial_params(struct gserial_device * device, unsigned int baudra
     return 0;
 }
 
-struct gserial_device * gserial_open(const char * port, unsigned int baudrate) {
+static struct gserial_device * gserial_open_internal(const char * port, unsigned int baudrate, int print )
+	{
 
     char scom[sizeof("\\\\.\\") + strlen(port)];
     snprintf(scom, sizeof(scom), "\\\\.\\%s", port);
 
-    struct gserial_device * device = (struct gserial_device *) async_open_path(scom, 1);
+    struct gserial_device * device = (struct gserial_device *) async_open_path(scom, print);
     if (device == NULL) {
         return NULL;
     }
@@ -89,6 +90,19 @@ struct gserial_device * gserial_open(const char * port, unsigned int baudrate) {
     }
 
     return device;
+}
+struct gserial_device * gserial_open(
+    const char * port,
+    unsigned int baudrate
+) {
+    return gserial_open_internal(port, baudrate, 1);
+}
+
+struct gserial_device * gserial_open_silent(
+    const char * port,
+    unsigned int baudrate
+) {
+    return gserial_open_internal(port, baudrate, 0);
 }
 
 int gserial_read_timeout(struct gserial_device * device, void * buf, unsigned int count, unsigned int timeout) {
